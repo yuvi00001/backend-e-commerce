@@ -54,14 +54,28 @@ const startServer = async () => {
     // Initialize database
     await initializeDatabase();
     
-    // Start server
-    app.listen(PORT, () => {
-      logger.info(`Server is running on port ${PORT}`);
-    });
+    // Start server if not being required by another module (clustering setup)
+    if (!module.parent) {
+      app.listen(PORT, () => {
+        logger.info(`Server is running on port ${PORT}`);
+      });
+    } else {
+      // When imported by clustering module, just initialize the database
+      const server = app.listen(PORT, () => {
+        logger.info(`Worker server is running on port ${PORT}`);
+      });
+
+      // Export server for graceful shutdown
+      module.exports = server;
+    }
   } catch (error) {
     logger.error('Failed to start server:', error);
     process.exit(1);
   }
 };
 
-startServer(); 
+// Start the server
+startServer();
+
+// Export the app for testing or cluster usage
+module.exports = app; 

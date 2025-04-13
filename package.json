@@ -2,12 +2,16 @@
   "name": "ecommerce-backend",
   "version": "1.0.0",
   "description": "E-commerce website backend with Firebase authentication and MongoDB",
-  "main": "src/index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "node server.js",
+    "start:single": "node src/index.js",
     "dev": "nodemon src/index.js",
+    "dev:cluster": "nodemon server.js",
     "seed:products": "node src/seed-products.js",
-    "seed:additional": "node src/additional-products.js"
+    "seed:additional": "node src/additional-products.js",
+    "test:load": "node load-test.js",
+    "benchmark": "npm run start:single & sleep 5 && node load-test.js && kill $! && npm start & sleep 5 && node load-test.js && kill $!"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
